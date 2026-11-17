@@ -9,6 +9,11 @@ const hoursAgo = (h: number) => new Date(Date.now() - h * 3600_000);
 const token = () => randomBytes(16).toString("base64url");
 
 async function main() {
+  // On a hosted demo, seed only the first time so real test data is never wiped.
+  if (process.env.SEED_ONLY_IF_EMPTY === "true" && (await db.user.count()) > 0) {
+    console.log("Database already has data, skipping seed.");
+    return;
+  }
   // wipe (development only)
   for (const m of ["reminder", "billLine", "bill", "notification", "jobEvent", "photo", "jobCheck", "job", "schedule", "checklistTemplate", "session", "otpCode", "user", "unit", "site", "client", "subcontractor", "lead", "counter"] as const) {
     // @ts-expect-error dynamic model access

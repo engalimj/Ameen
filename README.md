@@ -82,3 +82,23 @@ Bengali: add `ur.json` or `bn.json` with the same keys, add one line to
 
 Next.js 15 (app router, server actions), TypeScript, Tailwind CSS 4, Prisma,
 SQLite for development and PostgreSQL for production, installable as a PWA.
+
+## Host a demo (Railway)
+
+The repo includes a `Dockerfile` and `railway.json`. Data (the SQLite database
+and uploaded photos) lives on a volume at `/data`, and demo data is added on
+the first start only.
+
+1. On railway.com, sign in with GitHub, then **New Project → Deploy from GitHub repo → engalimj/Ameen**.
+2. Right-click the service → **Attach volume**, mount path `/data`.
+3. In **Variables**, add:
+   - `SEED_DEMO=true`
+   - `MESSAGING_MODE=console` (shows sign-in codes on screen, for demos only)
+   - `ALLOW_MOCK_PAYMENTS=true` (test checkout, no real money)
+   - `CRON_SECRET=<any long random text>`
+   - `APP_URL=https://<your domain>` (fill in after step 4)
+4. **Settings → Networking → Generate domain**, then set `APP_URL` to it.
+
+Because sign-in codes show on screen in demo mode, don't put real tenant data
+on the demo. For the live version, move to PostgreSQL in a Saudi region and
+turn off `MESSAGING_MODE=console` and `ALLOW_MOCK_PAYMENTS`.
