@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { getI18n } from "@/i18n";
-import { signOutAction } from "@/app/actions/session";
+import { signOutAction, stopViewAsAction } from "@/app/actions/session";
+import { getViewAs } from "@/lib/auth";
 import { LangSwitch } from "./LangSwitch";
 import { Icon, type IconName } from "./Icon";
 
@@ -20,19 +21,30 @@ export async function PortalShell({
 }) {
   const { t, locale } = await getI18n();
   const unread = await db.notification.count({ where: { userId: user.id, readAt: null } });
+  const viewAs = await getViewAs();
   return (
     <div className="min-h-dvh pb-24 md:pb-10">
-      <header className="no-print sticky top-0 z-20 border-b border-sand bg-ivory/95 backdrop-blur">
+      {viewAs && (
+        <div className="no-print sticky top-0 z-30 flex flex-wrap items-center justify-center gap-3 bg-slate px-4 py-2 text-sm text-white">
+          <span>
+            {t("viewAs.banner", { name: viewAs.user.name, role: t(`portal.${viewAs.user.role}` as never) })}
+          </span>
+          <form action={stopViewAsAction}>
+            <button className="rounded-lg bg-white px-3 py-1 font-semibold text-slate">{t("viewAs.back")}</button>
+          </form>
+        </div>
+      )}
+      <header className={`no-print sticky ${viewAs ? "top-9" : "top-0"} z-20 border-b border-sand bg-ivory/95 backdrop-blur`}>
         <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3">
           <Link href={nav[0].href} className="flex items-center gap-2.5" aria-label={t("brand.name")}>
             <img src="/brand/ameen-mark-primary.svg" alt="" width={34} height={34} />
             <span className="text-lg font-bold">{t("brand.name")}</span>
-            <span className="hidden rounded-full bg-sage-tint px-2.5 py-0.5 text-xs font-medium text-sage-deep sm:inline">{portalLabel}</span>
+            <span className="hidden whitespace-nowrap rounded-full bg-sage-tint px-2.5 py-0.5 text-xs font-medium text-sage-deep sm:inline">{portalLabel}</span>
           </Link>
-          <nav className="ms-6 hidden gap-1 md:flex" aria-label={t("nav.main")}>
+          <nav className="ms-3 hidden gap-0 lg:flex" aria-label={t("nav.main")}>
             {nav.map((n) => (
-              <Link key={n.href} href={n.href} className="btn-quiet btn min-h-9 px-3 text-sm font-medium text-slate">
-                <Icon name={n.icon} size={18} />
+              <Link key={n.href} href={n.href} className="btn-quiet btn min-h-9 gap-1.5 whitespace-nowrap px-2 text-sm font-medium text-slate">
+                <Icon name={n.icon} size={18} className={nav.length > 5 ? "hidden xl:block" : ""} />
                 {n.label}
               </Link>
             ))}

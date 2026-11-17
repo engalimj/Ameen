@@ -3,7 +3,8 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { LOCALE_COOKIE, isLocale } from "@/i18n/config";
-import { getCurrentUser, signOut } from "@/lib/auth";
+import { getCurrentUser, signOut, startViewAs, stopViewAs } from "@/lib/auth";
+import { PORTAL_PATH, type Role } from "@/lib/constants";
 import { db } from "@/lib/db";
 
 export async function setLocale(formData: FormData) {
@@ -25,4 +26,16 @@ export async function markNotificationsRead() {
   if (!user) return;
   await db.notification.updateMany({ where: { userId: user.id, readAt: null }, data: { readAt: new Date() } });
   revalidatePath("/", "layout");
+}
+
+export async function viewAsAction(formData: FormData) {
+  const id = String(formData.get("userId") ?? "");
+  const user = await db.user.findUnique({ where: { id } });
+  if (!user || !(await startViewAs(user.id))) redirect("/admin");
+  redirect(PORTAL_PATH[user.role as Role]);
+}
+
+export async function stopViewAsAction() {
+  await stopViewAs();
+  redirect("/admin/screens");
 }

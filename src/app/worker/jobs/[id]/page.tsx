@@ -3,13 +3,22 @@ import { db } from "@/lib/db";
 import { requireRole } from "@/lib/auth";
 import { getI18n } from "@/i18n";
 import { flagProblemAction, saveWorkAction, startJobAction } from "@/app/actions/worker";
-import { JobSummary, JobTimeline, jobInclude } from "@/components/Jobs";
+import { JobPhotos, JobSummary, JobTimeline, jobInclude } from "@/components/Jobs";
+import { CheckAnswer, OUTCOME_ICONS, OptionTiles, PROBLEM_ICONS } from "@/components/WorkerOptions";
+import { PhotoPicker } from "@/components/PhotoPicker";
+import { WORK_OUTCOMES, WORK_PROBLEMS } from "@/lib/constants";
 import { BackLink } from "@/components/PortalShell";
 import { SubmitButton } from "@/components/SubmitButton";
 import { Icon } from "@/components/Icon";
 
-const fileCls =
-  "block w-full text-sm file:me-3 file:rounded-xl file:border-0 file:bg-sage-tint file:px-4 file:py-2.5 file:font-semibold file:text-sage-deep";
+function Step({ n, title }: { n: number; title: string }) {
+  return (
+    <h2 className="flex items-center gap-3 text-lg font-semibold">
+      <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-sage-deep text-white">{n}</span>
+      {title}
+    </h2>
+  );
+}
 
 export default async function WorkerJob({
   params,
@@ -24,82 +33,98 @@ export default async function WorkerJob({
   const { t, fmtDateTime, locale } = await getI18n();
   const job = await db.job.findFirst({ where: { id, assigneeId: user.id }, include: jobInclude });
   if (!job) notFound();
+  const outcomeLabels = Object.fromEntries(WORK_OUTCOMES.map((o) => [o, t(`outcome.${o}`)]));
+  const problemLabels = Object.fromEntries(WORK_PROBLEMS.map((o) => [o, t(`problem.${o}`)]));
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-4">
       <BackLink href="/worker" label={t("common.back")} />
       {sp.saved && <p role="status" className="rounded-xl bg-done-bg px-4 py-3 text-done-ink">{t("worker.saved")}</p>}
       {sp.flagged && <p role="status" className="rounded-xl bg-done-bg px-4 py-3 text-done-ink">{t("worker.flagged")}</p>}
-      {sp.error && <p role="alert" className="rounded-xl bg-urgent-bg px-4 py-3 text-urgent-ink">{t(sp.error === "photo" ? "worker.needAfterPhoto" : "worker.needChecks")}</p>}
+      {sp.error && <p role="alert" className="rounded-xl bg-urgent-bg px-4 py-3 text-urgent-ink">{t(sp.error === "photo" ? "worker.needAfterPhoto" : sp.error === "outcome" ? "worker.needOutcome" : "worker.needChecks")}</p>}
 
       {(job.status === "NEW" || job.status === "SCHEDULED") && (
         <form action={startJobAction}>
           <input type="hidden" name="jobId" value={job.id} />
-          <SubmitButton className="btn-primary btn w-full min-h-14 text-lg">
-            <Icon name="clock" /> {t("worker.start")}
+          <SubmitButton className="btn-primary btn w-full min-h-16 text-xl">
+            <Icon name="clock" size={26} /> {t("worker.start")}
           </SubmitButton>
         </form>
       )}
 
       {job.status === "IN_PROGRESS" ? (
-        <form action={saveWorkAction} className="card flex flex-col gap-5">
+        <form action={saveWorkAction} className="flex flex-col gap-4">
           <input type="hidden" name="jobId" value={job.id} />
-          <div>
+          <section className="card">
             <p className="text-sm text-muted" dir="ltr">#{job.number}</p>
             <h1 className="h1">{job.title}</h1>
-            <p className="text-muted">{job.site.name}{job.unit ? ` · ${job.unit.label}` : ""}</p>
-            {job.description && <p className="mt-2 text-sm">{job.description}</p>}
-          </div>
+            <p className="flex items-center gap-1 text-muted"><Icon name="pin" size={16} />{job.site.name}{job.unit ? ` · ${job.unit.label}` : ""}</p>
+            {job.description && <p className="mt-2">{job.description}</p>}
+            <JobPhotos photos={job.photos.filter((p) => p.kind === "REQUEST")} t={t} />
+          </section>
+
+          <section className="card flex flex-col gap-3">
+            <Step n={1} title={t("worker.step.before")} />
+            <PhotoPicker name="before" label={t("photo.BEFORE")} existing={job.photos.filter((p) => p.kind === "BEFORE").length} addMore={t("worker.tapToChange")} />
+          </section>
+
           {job.checks.length > 0 && (
-            <fieldset className="flex flex-col gap-3">
-              <legend className="h2 mb-2">{t("job.checklist")}</legend>
+            <section className="card flex flex-col gap-3">
+              <Step n={2} title={t("job.checklist")} />
               {job.checks.map((c) => (
                 <div key={c.id} className="rounded-xl bg-ivory p-3">
-                  <p className="font-medium">{locale === "ar" ? c.labelAr : c.labelEn}</p>
-                  <div className="mt-2 flex gap-2">
-                    {(["OK", "FAIL", "NA"] as const).map((r) => (
-                      <label key={r} className="flex min-h-11 flex-1 cursor-pointer items-center justify-center gap-1 rounded-xl border border-line bg-white text-sm has-[:checked]:border-2 has-[:checked]:border-sage-deep has-[:checked]:bg-sage-tint">
-                        <input type="radio" name={`check_${c.id}`} value={r} defaultChecked={c.result === r} className="sr-only" />
-                        {t(`check.${r}`)}
-                      </label>
-                    ))}
-                  </div>
-                  <input name={`note_${c.id}`} defaultValue={c.note ?? ""} placeholder={t("worker.checkNote")} className="input mt-2" />
+                  <p className="text-[17px] font-semibold">{locale === "ar" ? c.labelAr : c.labelEn}</p>
+                  <CheckAnswer name={`check_${c.id}`} value={c.result} labels={{ OK: t("check.OK"), FAIL: t("check.FAIL"), NA: t("check.NA") }} />
+                  <details className="mt-2">
+                    <summary className="cursor-pointer text-sm text-muted">{t("worker.addNote")}</summary>
+                    <input name={`note_${c.id}`} defaultValue={c.note ?? ""} className="input mt-2" />
+                  </details>
                 </div>
               ))}
-            </fieldset>
+            </section>
           )}
-          <div>
-            <label htmlFor="before" className="label">{t("photo.BEFORE")} ({job.photos.filter((p) => p.kind === "BEFORE").length})</label>
-            <input id="before" name="before" type="file" accept="image/*" capture="environment" multiple className={fileCls} />
-          </div>
-          <div>
-            <label htmlFor="after" className="label">{t("photo.AFTER")} ({job.photos.filter((p) => p.kind === "AFTER").length})</label>
-            <input id="after" name="after" type="file" accept="image/*" capture="environment" multiple className={fileCls} />
-            <p className="hint">{t("worker.afterHint")}</p>
-          </div>
-          <div>
-            <label htmlFor="workerNote" className="label">{t("job.workerNote")} <span className="text-muted">({t("common.optional")})</span></label>
-            <textarea id="workerNote" name="workerNote" rows={2} className="input" defaultValue={job.workerNote ?? ""} />
-          </div>
-          <div className="flex flex-col gap-2 sm:flex-row">
-            <SubmitButton name="intent" value="save" className="btn-secondary btn flex-1" formNoValidate>{t("common.save")}</SubmitButton>
-            <SubmitButton name="intent" value="finish" className="btn-primary btn flex-1">
-              <Icon name="check" /> {t("worker.finish")}
+
+          <section className="card flex flex-col gap-3">
+            <Step n={job.checks.length ? 3 : 2} title={t("worker.step.after")} />
+            <PhotoPicker name="after" label={t("photo.AFTER")} existing={job.photos.filter((p) => p.kind === "AFTER").length} addMore={t("worker.tapToChange")} />
+          </section>
+
+          <section className="card flex flex-col gap-3">
+            <Step n={job.checks.length ? 4 : 3} title={t("worker.step.outcome")} />
+            <p className="-mt-1 text-sm text-muted">{t("worker.outcomeHint")}</p>
+            <OptionTiles name="outcome" type="checkbox" options={WORK_OUTCOMES} icons={OUTCOME_ICONS} labels={outcomeLabels} selected={job.outcome?.split(",") ?? []} />
+            <details>
+              <summary className="cursor-pointer text-sm text-muted">{t("worker.addNote")}</summary>
+              <textarea id="workerNote" name="workerNote" rows={2} className="input mt-2" defaultValue={job.workerNote ?? ""} />
+            </details>
+          </section>
+
+          <div className="sticky bottom-20 z-10 md:bottom-4">
+            <SubmitButton name="intent" value="finish" className="btn-primary btn min-h-16 w-full text-lg shadow-lg">
+              <Icon name="check" size={24} /> {t("worker.finish")}
             </SubmitButton>
+          </div>
+          <div>
+            <SubmitButton name="intent" value="save" className="btn-secondary btn w-full" formNoValidate>{t("worker.saveForLater")}</SubmitButton>
           </div>
         </form>
       ) : (
         <JobSummary job={job} t={t} fmtDateTime={fmtDateTime} locale={locale} />
       )}
 
-      {job.status !== "COMPLETED" && (
+      {job.status !== "COMPLETED" && job.status !== "NEEDS_APPROVAL" && (
         <details className="card">
-          <summary className="cursor-pointer font-semibold text-urgent-ink">{t("worker.flagProblem")}</summary>
-          <form action={flagProblemAction} className="mt-3 flex flex-col gap-2">
+          <summary className="flex cursor-pointer items-center gap-2 text-lg font-semibold text-urgent-ink">
+            <Icon name="alert" size={24} /> {t("worker.flagProblem")}
+          </summary>
+          <form action={flagProblemAction} className="mt-4 flex flex-col gap-3">
             <input type="hidden" name="jobId" value={job.id} />
-            <textarea name="problem" rows={2} className="input" required placeholder={t("worker.problemPh")} />
-            <SubmitButton className="btn-danger btn">{t("worker.sendProblem")}</SubmitButton>
+            <OptionTiles name="problem" type="radio" options={WORK_PROBLEMS} icons={PROBLEM_ICONS} labels={problemLabels} required />
+            <details>
+              <summary className="cursor-pointer text-sm text-muted">{t("worker.addNote")}</summary>
+              <textarea name="note" rows={2} className="input mt-2" />
+            </details>
+            <SubmitButton className="btn-danger btn min-h-14 text-lg">{t("worker.sendProblem")}</SubmitButton>
           </form>
         </details>
       )}

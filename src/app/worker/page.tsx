@@ -28,7 +28,10 @@ export default async function WorkerHome({ searchParams }: { searchParams: Promi
   ]);
   return (
     <>
-      <PageHeader title={t("worker.today")} sub={t("worker.todaySub", { count: active.length, waiting })} />
+      <PageHeader
+        title={t("worker.today")}
+        sub={[user.employeeNo ? t("worker.employeeNo", { no: user.employeeNo }) : null, t("worker.todaySub", { count: active.length, waiting })].filter(Boolean).join(" · ")}
+      />
       {done && <p role="status" className="mb-4 rounded-xl bg-done-bg px-4 py-3 text-done-ink">{t("worker.sentForApproval", { number: done })}</p>}
       <JobList jobs={active} hrefFor={(j) => `/worker/jobs/${j.id}`} t={t} fmt={(d) => fmtDateTime(d)} empty={t("worker.noJobs")} />
       {upcoming.length > 0 && (

@@ -60,6 +60,7 @@ model User {
   id              String         @id @default(cuid())
   name            String
   phone           String         @unique // E.164, e.g. +9665XXXXXXXX
+  employeeNo      String? // unique, checked in app code; field workers and Ameen staff, e.g. "AM-1001"
   email           String?
   role            String // ADMIN | CLIENT | TENANT | WORKER
   locale          String         @default("ar")
@@ -153,6 +154,7 @@ model Job {
   approvedAt          DateTime?
   rejectedReason      String?
   workerNote          String?
+  outcome             String? // what the worker did, comma separated codes (see WORK_OUTCOMES)
   rating              Int?
   ratingNote          String?
   createdAt           DateTime           @default(now())

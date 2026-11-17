@@ -37,3 +37,10 @@ export function isOverdue(job: { status: string; createdAt: Date; startedAt: Dat
   if (job.status !== "NEW" && job.status !== "SCHEDULED") return false;
   return now.getTime() - job.createdAt.getTime() > RESPONSE_HOURS * 3600_000;
 }
+
+/** Tap options for field workers, so they never have to type. Labels live in the translation files. */
+export const WORK_OUTCOMES = ["FIXED", "REPLACED_PART", "CLEANED", "ADJUSTED", "TEMP_FIX", "NEEDS_PART", "NEEDS_SPECIALIST", "NEEDS_REVISIT"] as const;
+export type WorkOutcome = (typeof WORK_OUTCOMES)[number];
+
+export const WORK_PROBLEMS = ["NO_ACCESS", "TENANT_ABSENT", "NEED_PART", "NEED_HELP", "MISSING_TOOLS", "UNSAFE"] as const;
+export type WorkProblem = (typeof WORK_PROBLEMS)[number];

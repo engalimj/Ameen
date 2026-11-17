@@ -1,7 +1,7 @@
 import { getI18n } from "@/i18n";
 import { createJobAction } from "@/app/actions/admin";
 import { JOB_TYPES, PRIORITIES } from "@/lib/constants";
-import { adminOptions } from "@/lib/options";
+import { adminOptions, workerLabel } from "@/lib/options";
 import { BackLink, PageHeader } from "@/components/PortalShell";
 import { SubmitButton } from "@/components/SubmitButton";
 
@@ -51,7 +51,7 @@ export default async function NewJob({ searchParams }: { searchParams: Promise<{
           <label className="label" htmlFor="assigneeId">{t("job.assignee")} ({t("common.optional")})</label>
           <select id="assigneeId" name="assigneeId" className="input" defaultValue="">
             <option value="">{t("job.unassigned")}</option>
-            {workers.map((w) => <option key={w.id} value={w.id}>{w.name}</option>)}
+            {workers.map((w) => <option key={w.id} value={w.id}>{workerLabel(w)}</option>)}
           </select>
         </div>
         <div>
