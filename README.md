@@ -1,36 +1,84 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Ameen · أمين
 
-## Getting Started
+Facility management for residential compounds in Saudi Arabia: daily cleaning,
+periodic inspection, regular maintenance, repairs on request, and monthly
+payment collection with WhatsApp reminders.
 
-First, run the development server:
+One web app, four portals, one database:
+
+| Portal | Path | Who |
+| --- | --- | --- |
+| Tenant | `/tenant` | Report an issue with photos, follow it, rate it, see and pay monthly bills |
+| Field worker | `/worker` | Today's jobs, start, checklist, before and after photos, finish, flag a problem |
+| Owner (client) | `/client` | Approve or send back finished work, open and overdue jobs, monthly report, collections |
+| Ameen team | `/admin` | Assign jobs, recurring schedules, bills and reminders, setup, website leads |
+
+Also: the public landing page with free-inspection booking (`/`), phone sign-in
+with a one-time code (`/login`), and the tenant payment page (`/pay/<token>`).
+
+## Run it locally
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env
+npm run db:push     # create the SQLite database
+npm run db:seed     # sample data: Yasmin Compound, Rawdah Residence
+npm run dev         # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Sign in with these sample numbers. In test mode the one-time code is shown on screen.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Number | Role |
+| --- | --- |
+| 0500000001 | Ameen team (admin) |
+| 0500000002 | Owner, Yasmin Real Estate |
+| 0500000003 | Tenant, Sara, Apt 12 (Arabic) |
+| 0500000005 | Tenant, Mohammed, Apt 7 (English) |
+| 0500000004 | Worker, Imran, cleaning (English) |
+| 0500000006 | Worker, Ahmed, maintenance |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+All money amounts in the sample data are placeholders.
 
-## Learn More
+## How the main flows work
 
-To learn more about Next.js, take a look at the following resources:
+**Jobs.** A job comes from a tenant or owner request, an admin, or a recurring
+schedule. Admin assigns a worker and a time. The worker starts, completes the
+checklist, adds before and after photos (at least one after photo is required)
+and finishes. The owner approves, or sends it back with a reason, which reopens
+it. A failed item on an inspection creates a repair job automatically. Requests
+not started within 4 hours show as overdue to admin and owner.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**Payments.** Each unit has a monthly rent, service charge and Ameen fee. One
+bill per unit per month keeps owner money (rent, service charge) and Ameen money
+(fee, paid repairs) on separate lines, while the tenant gets one link for the
+total. Reminders go on WhatsApp 3 days before the due date, on the due date,
+3 days after, then weekly until paid. A confirmed payment marks the bill paid
+and stops the reminders.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+**Daily job.** `GET /api/cron/daily` (with `Authorization: Bearer $CRON_SECRET`)
+creates today's scheduled jobs, creates the month's bills, and sends due
+reminders. Run it once a day, for example 8:00 Riyadh time.
 
-## Deploy on Vercel
+## Languages
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Arabic (default, right to left) and English (left to right) on every screen.
+All text lives in `src/i18n/ar.json` and `src/i18n/en.json`. To add Urdu or
+Bengali: add `ur.json` or `bn.json` with the same keys, add one line to
+`src/i18n/config.ts`, and run `npm run i18n:check`. Layouts use logical CSS
+(`ms-`, `pe-`, `start`, `end`) so they flip with the language.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Going live checklist
+
+- [ ] PostgreSQL in a Saudi cloud region (PDPL); switch `provider` in `prisma/schema.prisma`
+- [ ] Photo storage: replace `saveFile` in `src/lib/storage.ts` with a Saudi-region object store
+- [ ] SMS provider for sign-in codes (`sendOtp` in `src/lib/messaging.ts`)
+- [ ] Meta WhatsApp Business verification and an approved `payment_reminder` template
+- [ ] Payment gateway merchant account (Moyasar is wired in; set `PAYMENT_GATEWAY=moyasar`)
+- [ ] Decide where collected owner money settles (check with an accountant)
+- [ ] Schedule the daily job and set `CRON_SECRET`
+- [ ] Set `MESSAGING_MODE=live` so codes are no longer shown on screen
+
+## Stack
+
+Next.js 15 (app router, server actions), TypeScript, Tailwind CSS 4, Prisma,
+SQLite for development and PostgreSQL for production, installable as a PWA.

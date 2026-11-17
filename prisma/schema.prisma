@@ -1,0 +1,271 @@
+// Ameen MVP data model.
+// Development uses SQLite. Production should switch `provider` to "postgresql"
+// (hosted in a Saudi region for PDPL). Enum-like fields are strings so the
+// same schema runs on both; allowed values live in src/lib/constants.ts.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Client {
+  id            String   @id @default(cuid())
+  name          String
+  contractStart DateTime
+  contractEnd   DateTime
+  monthlyFee    Int      @default(0) // Ameen fee in halalas, placeholder until priced
+  createdAt     DateTime @default(now())
+  sites         Site[]
+  users         User[]
+}
+
+model Site {
+  id        String     @id @default(cuid())
+  name      String
+  city      String
+  clientId  String
+  client    Client     @relation(fields: [clientId], references: [id])
+  units     Unit[]
+  jobs      Job[]
+  schedules Schedule[]
+}
+
+model Unit {
+  id            String   @id @default(cuid())
+  label         String // e.g. "Apt 12", "Villa 4"
+  kind          String // APARTMENT | VILLA | COMMON
+  siteId        String
+  site          Site     @relation(fields: [siteId], references: [id])
+  monthlyRent   Int      @default(0) // halalas, collected for the owner
+  serviceCharge Int      @default(0) // halalas, collected for the owner
+  ameenFee      Int      @default(0) // halalas, Ameen's own monthly fee
+  dueDay        Int      @default(1) // day of month payment is due
+  tenants       User[]   @relation("UnitTenants")
+  jobs          Job[]
+  bills         Bill[]
+}
+
+model Subcontractor {
+  id      String @id @default(cuid())
+  name    String
+  phone   String
+  workers User[]
+}
+
+model User {
+  id              String         @id @default(cuid())
+  name            String
+  phone           String         @unique // E.164, e.g. +9665XXXXXXXX
+  email           String?
+  role            String // ADMIN | CLIENT | TENANT | WORKER
+  locale          String         @default("ar")
+  active          Boolean        @default(true)
+  clientId        String?
+  client          Client?        @relation(fields: [clientId], references: [id])
+  subcontractorId String?
+  subcontractor   Subcontractor? @relation(fields: [subcontractorId], references: [id])
+  unitId          String?
+  unit            Unit?          @relation("UnitTenants", fields: [unitId], references: [id])
+  createdAt       DateTime       @default(now())
+  sessions        Session[]
+  requested       Job[]          @relation("JobRequester")
+  assigned        Job[]          @relation("JobAssignee")
+  notifications   Notification[]
+}
+
+model OtpCode {
+  id        String   @id @default(cuid())
+  phone     String
+  codeHash  String
+  expiresAt DateTime
+  attempts  Int      @default(0)
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([phone])
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  tokenHash String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model ChecklistTemplate {
+  id        String     @id @default(cuid())
+  name      String
+  jobType   String
+  items     String // JSON array of { ar, en }
+  schedules Schedule[]
+  jobs      Job[]
+}
+
+model Schedule {
+  id                  String             @id @default(cuid())
+  siteId              String
+  site                Site               @relation(fields: [siteId], references: [id])
+  jobType             String // CLEANING | INSPECTION | MAINTENANCE
+  title               String
+  frequency           String // DAILY | WEEKLY | MONTHLY
+  dayOfWeek           Int? // 0-6 for WEEKLY
+  dayOfMonth          Int? // 1-28 for MONTHLY
+  timeSlot            String             @default("09:00")
+  defaultAssigneeId   String?
+  checklistTemplateId String?
+  checklistTemplate   ChecklistTemplate? @relation(fields: [checklistTemplateId], references: [id])
+  active              Boolean            @default(true)
+  lastGeneratedFor    DateTime?
+  jobs                Job[]
+}
+
+model Job {
+  id                  String             @id @default(cuid())
+  number              Int                @unique
+  type                String // CLEANING | INSPECTION | MAINTENANCE | REPAIR
+  title               String
+  description         String?
+  status              String             @default("NEW") // NEW | SCHEDULED | IN_PROGRESS | NEEDS_APPROVAL | COMPLETED
+  priority            String             @default("NORMAL") // LOW | NORMAL | URGENT
+  source              String             @default("REQUEST") // REQUEST | SCHEDULE | INSPECTION
+  siteId              String
+  site                Site               @relation(fields: [siteId], references: [id])
+  unitId              String?
+  unit                Unit?              @relation(fields: [unitId], references: [id])
+  requesterId         String?
+  requester           User?              @relation("JobRequester", fields: [requesterId], references: [id])
+  assigneeId          String?
+  assignee            User?              @relation("JobAssignee", fields: [assigneeId], references: [id])
+  scheduleId          String?
+  schedule            Schedule?          @relation(fields: [scheduleId], references: [id])
+  checklistTemplateId String?
+  checklistTemplate   ChecklistTemplate? @relation(fields: [checklistTemplateId], references: [id])
+  parentJobId         String? // repair created from a failed inspection item
+  scheduledFor        DateTime?
+  startedAt           DateTime?
+  finishedAt          DateTime?
+  approvedAt          DateTime?
+  rejectedReason      String?
+  workerNote          String?
+  rating              Int?
+  ratingNote          String?
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+  checks              JobCheck[]
+  photos              Photo[]
+  events              JobEvent[]
+
+  @@index([status])
+  @@index([siteId])
+}
+
+model JobCheck {
+  id     String  @id @default(cuid())
+  jobId  String
+  job    Job     @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  index  Int
+  labelAr String
+  labelEn String
+  result String? // OK | FAIL | NA
+  note   String?
+}
+
+model Photo {
+  id        String   @id @default(cuid())
+  jobId     String
+  job       Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  kind      String // REQUEST | BEFORE | AFTER
+  url       String
+  createdAt DateTime @default(now())
+}
+
+model JobEvent {
+  id        String   @id @default(cuid())
+  jobId     String
+  job       Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  actorId   String?
+  action    String // CREATED | ASSIGNED | STARTED | FINISHED | APPROVED | REJECTED | RATED
+  note      String?
+  createdAt DateTime @default(now())
+}
+
+// One bill per unit per month. Lines keep owner money (rent, service charge)
+// and Ameen money (fee, paid repairs) apart; one payment link covers the total.
+model Bill {
+  id          String     @id @default(cuid())
+  unitId      String
+  unit        Unit       @relation(fields: [unitId], references: [id])
+  period      String // "2026-11"
+  dueDate     DateTime
+  status      String     @default("DUE") // DUE | PAID | CANCELLED
+  paidAt      DateTime?
+  payToken    String     @unique // used in the public payment link
+  gateway     String? // MOCK | MOYASAR | HYPERPAY | TAP
+  gatewayRef  String?
+  paidMethod  String? // MADA | APPLE_PAY | STC_PAY | CARD | CASH | TRANSFER
+  createdAt   DateTime   @default(now())
+  lines       BillLine[]
+  reminders   Reminder[]
+
+  @@unique([unitId, period])
+}
+
+model BillLine {
+  id     String @id @default(cuid())
+  billId String
+  bill   Bill   @relation(fields: [billId], references: [id], onDelete: Cascade)
+  kind   String // RENT | SERVICE_CHARGE | AMEEN_FEE | REPAIR
+  payee  String // OWNER | AMEEN
+  amount Int // halalas
+  note   String?
+}
+
+model Reminder {
+  id        String   @id @default(cuid())
+  billId    String
+  bill      Bill     @relation(fields: [billId], references: [id], onDelete: Cascade)
+  stage     String // BEFORE_3 | DUE | AFTER_3 | WEEKLY_1, WEEKLY_2, ...
+  channel   String // WHATSAPP | EMAIL | IN_APP
+  status    String // SENT | FAILED | SKIPPED
+  detail    String?
+  createdAt DateTime @default(now())
+
+  @@unique([billId, stage, channel])
+}
+
+model Notification {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kind      String
+  title     String
+  body      String
+  link      String?
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+}
+
+model Counter {
+  name  String @id
+  value Int
+}
+
+// Free-inspection requests from the landing page.
+model Lead {
+  id        String   @id @default(cuid())
+  name      String
+  phone     String
+  city      String?
+  siteType  String
+  units     String
+  services  String // comma separated
+  locale    String
+  status    String   @default("NEW") // NEW | CONTACTED | WON | LOST
+  createdAt DateTime @default(now())
+}
