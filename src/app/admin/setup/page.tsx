@@ -47,7 +47,7 @@ export default async function Setup({ searchParams }: { searchParams: Promise<{ 
     <>
       <PageHeader title={t("nav.setup")} sub={t("setup.sub")} />
       {sp.created && <p role="status" className="mb-4 rounded-xl bg-done-bg px-4 py-3 text-done-ink">{t("setup.userCreated")}</p>}
-      {sp.error && <p role="alert" className="mb-4 rounded-xl bg-urgent-bg px-4 py-3 text-urgent-ink">{t(sp.error === "phone" ? "setup.phoneTaken" : "setup.userError")}</p>}
+      {sp.error && <p role="alert" className="mb-4 rounded-xl bg-urgent-bg px-4 py-3 text-urgent-ink">{t(sp.error === "phone" ? "setup.phoneTaken" : sp.error === "employeeNo" ? "setup.employeeNoTaken" : "setup.userError")}</p>}
       <div className="grid gap-4 lg:grid-cols-2">
         <Section title={t("setup.clients")}>
           <ul className="flex flex-col gap-2 text-sm">
@@ -137,10 +137,11 @@ export default async function Setup({ searchParams }: { searchParams: Promise<{ 
       <Section title={t("setup.people")}>
         <div className="overflow-x-auto">
           <table className="table">
-            <thead><tr><th>{t("setup.name")}</th><th>{t("setup.role")}</th><th>{t("login.phone")}</th><th>{t("setup.linkedTo")}</th></tr></thead>
+            <thead><tr><th>{t("setup.employeeNo")}</th><th>{t("setup.name")}</th><th>{t("setup.role")}</th><th>{t("login.phone")}</th><th>{t("setup.linkedTo")}</th></tr></thead>
             <tbody>
               {users.map((u) => (
                 <tr key={u.id}>
+                  <td dir="ltr" className="text-start text-muted">{u.employeeNo ?? "—"}</td>
                   <td className="font-medium">{u.name}</td>
                   <td>{t(`portal.${u.role}` as never)}</td>
                   <td dir="ltr" className="text-start">{u.phone}</td>
@@ -186,6 +187,7 @@ export default async function Setup({ searchParams }: { searchParams: Promise<{ 
               {clients.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
           </div>
+          <Field name="employeeNo" label={`${t("setup.employeeNo")} (${t("setup.employeeNoHint")})`} dir="ltr" placeholder="AM-1001" />
           <Field name="email" label={`${t("setup.email")} (${t("common.optional")})`} type="email" dir="ltr" />
         </AddForm>
       </Section>

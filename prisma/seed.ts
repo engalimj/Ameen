@@ -40,12 +40,12 @@ async function main() {
   const cleanPro = await db.subcontractor.create({ data: { name: "Clean Pro Co.", phone: "+966110000001" } });
   const coolTech = await db.subcontractor.create({ data: { name: "Cool Tech Maintenance", phone: "+966110000002" } });
 
-  const admin = await db.user.create({ data: { name: "Ameen Operations", phone: "+966500000001", role: "ADMIN", locale: "ar" } });
+  const admin = await db.user.create({ data: { name: "Ameen Operations", phone: "+966500000001", employeeNo: "AM-0001", role: "ADMIN", locale: "ar" } });
   const owner = await db.user.create({ data: { name: "Abu Fahad", phone: "+966500000002", role: "CLIENT", locale: "ar", clientId: client.id } });
   const sara = await db.user.create({ data: { name: "Sara Al-Otaibi", phone: "+966500000003", role: "TENANT", locale: "ar", unitId: units["Apt 12"] } });
-  const imran = await db.user.create({ data: { name: "Imran Khan", phone: "+966500000004", role: "WORKER", locale: "en", subcontractorId: cleanPro.id } });
+  const imran = await db.user.create({ data: { name: "Imran Khan", phone: "+966500000004", employeeNo: "AM-1001", role: "WORKER", locale: "en", subcontractorId: cleanPro.id } });
   const mohammed = await db.user.create({ data: { name: "Mohammed Al-Qahtani", phone: "+966500000005", role: "TENANT", locale: "en", unitId: units["Apt 7"] } });
-  const ahmed = await db.user.create({ data: { name: "Ahmed Saleh", phone: "+966500000006", role: "WORKER", locale: "ar", subcontractorId: coolTech.id } });
+  const ahmed = await db.user.create({ data: { name: "Ahmed Saleh", phone: "+966500000006", employeeNo: "AM-1002", role: "WORKER", locale: "ar", subcontractorId: coolTech.id } });
   await db.user.create({ data: { name: "Noura Al-Harbi", phone: "+966500000007", role: "TENANT", locale: "ar", unitId: units["Villa 2"] } });
 
   const cleaning = await db.checklistTemplate.create({

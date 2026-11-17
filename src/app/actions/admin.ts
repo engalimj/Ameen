@@ -181,11 +181,14 @@ export async function createUserAction(formData: FormData) {
   if (!ROLES.includes(role as never) || !phone) redirect("/admin/setup?error=user");
   const exists = await db.user.findUnique({ where: { phone } });
   if (exists) redirect("/admin/setup?error=phone");
+  const employeeNo = opt(formData, "employeeNo")?.toUpperCase() ?? null;
+  if (employeeNo && (await db.user.findFirst({ where: { employeeNo } }))) redirect("/admin/setup?error=employeeNo");
   await db.user.create({
     data: {
       name: str(formData, "name"),
       phone,
       email: opt(formData, "email"),
+      employeeNo,
       role,
       locale: str(formData, "locale") || "ar",
       clientId: role === "CLIENT" ? opt(formData, "clientId") : null,
@@ -200,4 +203,26 @@ export async function updateLeadAction(formData: FormData) {
   await requireRole("ADMIN");
   await db.lead.update({ where: { id: str(formData, "id") }, data: { status: str(formData, "status") } });
   revalidatePath("/admin/leads");
+}
+
+export async function updateEmployeeNoAction(formData: FormData) {
+  await requireRole("ADMIN");
+  const id = str(formData, "id");
+  const employeeNo = opt(formData, "employeeNo")?.toUpperCase() ?? null;
+  if (employeeNo && (await db.user.findFirst({ where: { employeeNo, id: { not: id } } }))) redirect("/admin/workers?error=employeeNo");
+  await db.user.update({ where: { id }, data: { employeeNo } });
+  revalidatePath("/admin/workers");
+}
+
+/** Assign straight from a list. Time defaults to the next full hour. */
+export async function quickAssignAction(formData: FormData) {
+  const admin = await requireRole("ADMIN");
+  const jobId = str(formData, "jobId");
+  const assigneeId = str(formData, "assigneeId");
+  const back = str(formData, "back") || "/admin";
+  if (!assigneeId) redirect(back);
+  const when = riyadhLocal(str(formData, "scheduledFor")) ?? new Date(Math.ceil(Date.now() / 3600_000) * 3600_000);
+  await assignJob(jobId, assigneeId, when, admin.id);
+  revalidatePath(back);
+  redirect(back.includes("?") ? `${back}&assigned=1` : `${back}?assigned=1`);
 }

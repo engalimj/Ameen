@@ -9,7 +9,7 @@ export function StatusFilter({ base, current, t }: { base: string; current?: str
       {items.map((s) => (
         <Link
           key={s ?? "all"}
-          href={s ? `${base}?status=${s}` : base}
+          href={s ? `${base}${base.includes("?") ? "&" : "?"}status=${s}` : base}
           className={`whitespace-nowrap rounded-full px-4 py-1.5 text-sm ${current === s ? "bg-sage-deep text-white" : "bg-white text-slate"}`}
         >
           {s ? t(`status.${s}` as never) : t("common.all")}

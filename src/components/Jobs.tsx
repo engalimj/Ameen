@@ -29,7 +29,7 @@ export function JobRow({ job, href, t, when }: { job: ListJob; href: string; t: 
           {job.priority === "URGENT" && <Chip kind="URGENT" label={t("priority.URGENT")} />}
           {overdue && <Chip kind="OVERDUE" label={t("status.OVERDUE")} />}
           <StatusChip status={job.status} t={t} />
-          <span className="text-xs text-muted">{when}</span>
+          <bdi className="text-xs text-muted">{when}</bdi>
         </div>
       </Link>
     </li>
@@ -90,6 +90,16 @@ export function JobSummary({ job, t, fmtDateTime, locale }: { job: FullJob; t: T
         <p className="mt-4 rounded-xl bg-urgent-bg px-3 py-2 text-sm text-urgent-ink">
           {t("job.rejectedReason")}: {job.rejectedReason}
         </p>
+      )}
+      {job.outcome && (
+        <div className="mt-4">
+          <p className="mb-1.5 text-sm text-muted">{t("job.outcome")}</p>
+          <div className="flex flex-wrap gap-2">
+            {job.outcome.split(",").map((o) => (
+              <Chip key={o} kind={o.startsWith("NEEDS_") ? "DUE" : "COMPLETED"} label={t(`outcome.${o}` as never)} />
+            ))}
+          </div>
+        </div>
       )}
       {job.workerNote && (
         <p className="mt-4 rounded-xl bg-ivory px-3 py-2 text-sm">
@@ -160,13 +170,20 @@ export function JobTimeline({ events, t, fmtDateTime }: { events: JobEvent[]; t:
         {events.map((e) => (
           <li key={e.id} className="text-sm">
             <p className="font-medium">{t(`event.${e.action}` as never)}</p>
-            {e.note && <p className="text-muted">{e.note}</p>}
+            {e.note && <p className="text-muted">{eventNote(e, t)}</p>}
             <time className="text-xs text-muted">{fmtDateTime(e.createdAt)}</time>
           </li>
         ))}
       </ol>
     </section>
   );
+}
+
+function eventNote(e: JobEvent, t: T) {
+  if (e.action !== "PROBLEM" || !e.note) return e.note;
+  const [code, ...rest] = e.note.split("|");
+  const label = /^[A-Z_]+$/.test(code) ? t(`problem.${code}` as never) : code;
+  return [label, rest.join("|")].filter(Boolean).join(" · ");
 }
 
 export const jobInclude = {

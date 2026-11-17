@@ -6,20 +6,21 @@ import { JobList } from "@/components/Jobs";
 import { PageHeader } from "@/components/PortalShell";
 import { StatusFilter } from "@/components/StatusFilter";
 
-export default async function AdminJobs({ searchParams }: { searchParams: Promise<{ status?: string }> }) {
+export default async function AdminJobs({ searchParams }: { searchParams: Promise<{ status?: string; worker?: string }> }) {
   const { t, fmtDateTime } = await getI18n();
-  const { status } = await searchParams;
+  const { status, worker } = await searchParams;
   const valid = JOB_STATUSES.includes(status as never) ? status : undefined;
+  const workerUser = worker ? await db.user.findUnique({ where: { id: worker } }) : null;
   const jobs = await db.job.findMany({
-    where: valid ? { status: valid } : {},
+    where: { ...(valid ? { status: valid } : {}), ...(workerUser ? { assigneeId: workerUser.id } : {}) },
     include: { site: true, unit: true, assignee: true },
     orderBy: { createdAt: "desc" },
     take: 200,
   });
   return (
     <>
-      <PageHeader title={t("nav.jobs")} action={<Link href="/admin/jobs/new" className="btn-primary btn">{t("admin.newJob")}</Link>} />
-      <StatusFilter base="/admin/jobs" current={valid} t={t} />
+      <PageHeader title={workerUser ? `${t("nav.jobs")} · ${[workerUser.employeeNo, workerUser.name].filter(Boolean).join(" · ")}` : t("nav.jobs")} action={<Link href="/admin/jobs/new" className="btn-primary btn">{t("admin.newJob")}</Link>} />
+      <StatusFilter base={workerUser ? `/admin/jobs?worker=${workerUser.id}` : "/admin/jobs"} current={valid} t={t} />
       <JobList jobs={jobs} hrefFor={(j) => `/admin/jobs/${j.id}`} t={t} fmt={(d) => fmtDateTime(d)} empty={t("common.noResults")} />
     </>
   );

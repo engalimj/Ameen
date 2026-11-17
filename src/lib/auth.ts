@@ -56,12 +56,47 @@ export async function verifyOtp(phone: string, code: string) {
   return user;
 }
 
-export async function getCurrentUser() {
+const VIEW_AS_COOKIE = "ameen_view_as";
+
+/** The person who actually signed in. */
+export async function getSessionUser() {
   const token = (await cookies()).get(SESSION_COOKIE)?.value;
   if (!token) return null;
   const session = await db.session.findUnique({ where: { tokenHash: sha(token) }, include: { user: true } });
   if (!session || session.expiresAt < new Date() || !session.user.active) return null;
   return session.user;
+}
+
+/**
+ * The user whose screens are shown. Normally the signed-in person; when an
+ * Ameen admin uses "Open their screen", it is the chosen user. The view-as
+ * cookie is ignored for anyone who is not an admin.
+ */
+export async function getCurrentUser() {
+  const real = await getSessionUser();
+  if (!real || real.role !== "ADMIN") return real;
+  const viewAs = (await cookies()).get(VIEW_AS_COOKIE)?.value;
+  if (!viewAs || viewAs === real.id) return real;
+  return (await db.user.findUnique({ where: { id: viewAs } })) ?? real;
+}
+
+/** When an admin is viewing someone else's screens: who they are viewing. */
+export async function getViewAs() {
+  const real = await getSessionUser();
+  if (!real || real.role !== "ADMIN") return null;
+  const viewed = await getCurrentUser();
+  return viewed && viewed.id !== real.id ? { admin: real, user: viewed } : null;
+}
+
+export async function startViewAs(userId: string) {
+  const real = await getSessionUser();
+  if (!real || real.role !== "ADMIN") return false;
+  (await cookies()).set(VIEW_AS_COOKIE, userId, { httpOnly: true, sameSite: "lax", path: "/", secure: process.env.NODE_ENV === "production" });
+  return true;
+}
+
+export async function stopViewAs() {
+  (await cookies()).delete(VIEW_AS_COOKIE);
 }
 
 /** Use at the top of each portal page. Redirects to sign-in or to the user's own portal. */
@@ -74,6 +109,7 @@ export async function requireRole(role: Role) {
 
 export async function signOut() {
   const jar = await cookies();
+  jar.delete(VIEW_AS_COOKIE);
   const token = jar.get(SESSION_COOKIE)?.value;
   if (token) await db.session.deleteMany({ where: { tokenHash: sha(token) } });
   jar.delete(SESSION_COOKIE);

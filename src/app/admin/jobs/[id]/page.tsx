@@ -5,7 +5,7 @@ import { assignAction } from "@/app/actions/admin";
 import { JobSummary, JobTimeline, jobInclude } from "@/components/Jobs";
 import { BackLink } from "@/components/PortalShell";
 import { SubmitButton } from "@/components/SubmitButton";
-import { adminOptions, riyadhInputValue } from "@/lib/options";
+import { adminOptions, riyadhInputValue, workerLabel } from "@/lib/options";
 
 export default async function AdminJob({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ assigned?: string; error?: string }> }) {
   const { id } = await params;
@@ -30,7 +30,7 @@ export default async function AdminJob({ params, searchParams }: { params: Promi
               <select id="assigneeId" name="assigneeId" className="input" defaultValue={job.assigneeId ?? ""} required>
                 <option value="" disabled>{t("common.choose")}</option>
                 {workers.map((w) => (
-                  <option key={w.id} value={w.id}>{w.name}{w.subcontractor ? ` · ${w.subcontractor.name}` : ""}</option>
+                  <option key={w.id} value={w.id}>{workerLabel(w)}</option>
                 ))}
               </select>
             </div>

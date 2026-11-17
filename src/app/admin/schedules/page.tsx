@@ -2,7 +2,7 @@ import { db } from "@/lib/db";
 import { getI18n } from "@/i18n";
 import { createScheduleAction, generateTodayAction, toggleScheduleAction } from "@/app/actions/admin";
 import { FREQUENCIES } from "@/lib/constants";
-import { adminOptions } from "@/lib/options";
+import { adminOptions, workerLabel } from "@/lib/options";
 import { PageHeader } from "@/components/PortalShell";
 import { SubmitButton } from "@/components/SubmitButton";
 import { Chip } from "@/components/StatusChip";
@@ -102,7 +102,7 @@ export default async function Schedules({ searchParams }: { searchParams: Promis
           <label className="label" htmlFor="defaultAssigneeId">{t("job.assignee")}</label>
           <select id="defaultAssigneeId" name="defaultAssigneeId" className="input" defaultValue="">
             <option value="">{t("job.unassigned")}</option>
-            {workers.map((w) => <option key={w.id} value={w.id}>{w.name}</option>)}
+            {workers.map((w) => <option key={w.id} value={w.id}>{workerLabel(w)}</option>)}
           </select>
         </div>
         <div className="sm:col-span-2">
