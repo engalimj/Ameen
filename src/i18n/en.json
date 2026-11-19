@@ -352,93 +352,6 @@
   "screens.WORKER": "Today's jobs and checklists",
   "screens.open": "Open their screen",
   "landing": {
-    "navLabel": "Navigation",
-    "navServices": "Services",
-    "navHow": "How it works",
-    "navFaq": "FAQ",
-    "ctaShort": "Free inspection",
-    "badge": "Facility care for residential compounds",
-    "heroTitle": "Your facilities, in trusted hands",
-    "heroSub": "Daily cleaning, periodic inspections, regular maintenance and repairs on request. Every visit is documented with photos in one app where you follow all your sites.",
-    "ctaMain": "Book a free site inspection",
-    "ctaSecond": "How it works",
-    "trust1": "Response within 4 hours",
-    "trust2": "Before and after photos",
-    "trust3": "Arabic and English",
-    "cardTitle": "Daily cleaning · Building A",
-    "cardDone": "Done",
-    "cardPlace": "Yasmin Compound · entrances and corridors",
-    "before": "Before",
-    "after": "After",
-    "cardTime": "Today 9:02 am",
-    "approve": "Approve",
-    "reportTitle": "Monthly report",
-    "reportSub": "Average inspection score this month",
-    "servicesTitle": "Everything your compound needs, from one team",
-    "servicesSub": "Pick the services that fit, and we set a steady schedule with clear follow-up.",
-    "s": [
-      [
-        "Daily cleaning",
-        "Entrances, corridors, elevators and shared areas cleaned every day, on your schedule."
-      ],
-      [
-        "Periodic inspection",
-        "A monthly checklist for every building with a clear score, notes and photos."
-      ],
-      [
-        "Regular maintenance",
-        "AC, elevators, pumps and generators serviced before they break and cost more."
-      ],
-      [
-        "Repairs on request",
-        "A report from a tenant or from you, and work starts within 4 hours with photos."
-      ]
-    ],
-    "howTitle": "Four simple steps",
-    "howSub": "From the first visit to your monthly report, everything is clear and tracked.",
-    "st": [
-      [
-        "Free inspection",
-        "We visit your site and send a photo report within 48 hours."
-      ],
-      [
-        "A plan that fits",
-        "We suggest a service schedule and a yearly contract billed monthly."
-      ],
-      [
-        "We get to work",
-        "Our teams follow the schedule, and tenants report issues from their phones."
-      ],
-      [
-        "Track and approve",
-        "See every job with photos, approve it, and get a monthly report."
-      ]
-    ],
-    "whyTitle": "Why Ameen?",
-    "w": [
-      [
-        "4 hours",
-        "Fast response",
-        "Any request not started within 4 hours shows up for you as overdue."
-      ],
-      [
-        "Photos",
-        "Every visit documented",
-        "Before and after photos and a checklist for every job. Proof, not promises."
-      ],
-      [
-        "Monthly",
-        "A clear report",
-        "Jobs done, inspection scores and response times for every building."
-      ],
-      [
-        "WhatsApp",
-        "Easier collection",
-        "Tenants get payment reminders with a link on WhatsApp, and you track payments in your dashboard."
-      ]
-    ],
-    "bookTitle": "Book your free inspection",
-    "bookSub": "Three short steps, under a minute.",
     "progressLabel": "Booking steps",
     "p": [
       "Your site",
@@ -476,38 +389,141 @@
     "fCityPh": "For example: Riyadh",
     "back": "Back",
     "next": "Next",
-    "send": "Send request",
     "err1": "Choose a property type and number of units to continue.",
     "err2": "Choose at least one service.",
-    "privacy": "We only use your details to contact you about the inspection.",
+    "errPhone": "Enter a valid Saudi mobile number, for example 05X XXX XXXX.",
     "thanks": "Thank you, we got your request",
     "thanksSub": "We will contact you within one working day to schedule the visit.",
     "again": "New request",
-    "faqTitle": "Frequently asked questions",
-    "fq": [
+    "headline": "Know exactly what your compound needs, in a free photo report within 48 hours",
+    "sub": "We visit your compound or building, check cleaning, facilities and equipment, and send you every finding with photos. If you like the plan, the same team then handles daily cleaning, maintenance and repairs.",
+    "cta": "Book my free inspection",
+    "ctaHow": "We visit your site, then send the photo report to your phone within 48 hours.",
+    "heroAlt": "Sample of the inspection report you receive: an overall score, findings with status, and photos of each finding.",
+    "rpTitle": "Site inspection report",
+    "rpSample": "Sample",
+    "rpSite": "Yasmin Compound · 3 buildings, 48 units",
+    "rpSent": "Sent 18 Nov, 41 hours after the visit",
+    "rpScore": "Overall score",
+    "rpFindings": "Findings",
+    "rpItems": [
       [
-        "Does the free inspection commit me to anything?",
-        "No. We visit, send the report, and the decision is entirely yours."
+        "Entrances and corridors",
+        "Good",
+        "done"
       ],
       [
-        "Do I need to download an app?",
-        "No. Ameen works in the browser on phone and computer, and can be added to the home screen."
+        "Elevator, Building B",
+        "Service due",
+        "wait"
       ],
       [
-        "How do tenants report a problem?",
-        "From their phone: pick the issue type, add a photo, and follow the status until it is fixed."
+        "Water pump room",
+        "Leak found",
+        "urgent"
       ],
       [
-        "How does billing work?",
-        "A yearly contract billed monthly, with clear details in your dashboard."
+        "Fire extinguishers",
+        "Expire in 30 days",
+        "wait"
       ]
     ],
-    "finalTitle": "Ready to see your site through Ameen’s eyes?",
-    "finalSub": "A free inspection and a photo report within 48 hours.",
-    "footerTag": "Ameen · Your facilities, in trusted hands",
-    "copyright": "© 2026 Ameen",
-    "signIn": "Sign in",
-    "err3": "Enter your name and mobile number.",
-    "errPhone": "Enter a valid Saudi mobile number, for example 05X XXX XXXX."
+    "rpPhotos": "38 photos",
+    "rpPhotoLabels": [
+      "Pump room",
+      "Elevator",
+      "Lobby"
+    ],
+    "rpPlan": "Suggested plan and monthly price included",
+    "rpNote": "Sample for illustration. Your report covers your own site.",
+    "formTitle": "Book your free inspection",
+    "formTime": "Three short steps, under a minute.",
+    "justify": "Why we ask for your details: to book the visit and send you the report. The report is yours to keep, whether or not you work with us.",
+    "consent": "By sending, you agree to our {privacy} and {terms}. We only contact you about your inspection, never with marketing messages.",
+    "privacyLink": "Privacy policy",
+    "termsLink": "Terms",
+    "objTitle": "Before you book",
+    "obj": [
+      [
+        "Is it really free?",
+        "Yes. The visit and the report cost nothing and do not commit you to anything. If you choose a plan later, it is a yearly contract billed monthly."
+      ],
+      [
+        "How do I know the work gets done?",
+        "Every job comes with before and after photos, and you approve it in the app. If it is not right, it goes back to the team."
+      ],
+      [
+        "Will it fit my property?",
+        "We work with compounds, apartment buildings and villas, from under 20 units to over 150. Tenants report issues from their phone, with no app to download."
+      ]
+    ],
+    "proofTitle": "What owners say",
+    "proof": [],
+    "err3": "Enter your name, mobile number and city.",
+    "footerRights": "© 2026 Ameen. All rights reserved."
+  },
+  "legal": {
+    "updated": "Last updated: 19 November 2026",
+    "home": "Back to Ameen",
+    "privacy": {
+      "title": "Privacy policy",
+      "intro": "This policy explains how Ameen collects and uses personal data through this website and the Ameen app, in line with the Saudi Personal Data Protection Law (PDPL).",
+      "sections": [
+        [
+          "What we collect",
+          "When you book a free inspection: your name, mobile number, city, property type, number of units and the services you are interested in. When you use the app: your phone number, language, the sites and units linked to you, requests you report, photos taken during jobs, and payment records."
+        ],
+        [
+          "Why we use it",
+          "To arrange and carry out the inspection, send you the report, provide the services in your contract, send service and payment notifications, and keep records the law requires. We do not send marketing messages without your separate consent."
+        ],
+        [
+          "Who we share it with",
+          "Only with those who help us deliver the service: the field service companies who do the work at your site, our hosting and messaging providers (for example WhatsApp for reminders), and licensed payment gateways. We do not sell personal data."
+        ],
+        [
+          "Where it is stored and for how long",
+          "We aim to store data in Saudi Arabia. We keep inspection requests for up to 24 months if no contract follows, and contract records for as long as the law requires."
+        ],
+        [
+          "Your rights",
+          "You can ask to see, correct or delete your data, or withdraw consent, at any time. Contact us and we will reply within 30 days."
+        ],
+        [
+          "Contact",
+          "Email tryameen.sa@gmail.com or message @tryameen.sa on Instagram."
+        ]
+      ]
+    },
+    "terms": {
+      "title": "Terms of use",
+      "intro": "These terms apply to this website, the free inspection, and the Ameen app.",
+      "sections": [
+        [
+          "The free inspection",
+          "The inspection visit and the report are free and do not commit you to anything. We agree on a visit time with you, and the report is sent to the mobile number you give us, usually within 48 hours of the visit."
+        ],
+        [
+          "What the report is",
+          "The report records what our team saw on the day of the visit. It is not an engineering certificate, a safety certification or a guarantee of the condition of the property."
+        ],
+        [
+          "Services and billing",
+          "Ongoing services are provided under a separate written contract, which sets out the services, prices and response times. Contracts are yearly and billed monthly unless agreed otherwise."
+        ],
+        [
+          "Using the app",
+          "Keep your sign-in code private and use the app only for your own sites and units. Photos and reports in the app belong to the property owner or manager who contracts with us."
+        ],
+        [
+          "Liability",
+          "We are responsible for the work we agree to do under your contract. We are not responsible for problems that existed before our work or that fall outside the agreed scope."
+        ],
+        [
+          "Governing law",
+          "These terms are governed by the laws of the Kingdom of Saudi Arabia."
+        ]
+      ]
+    }
   }
 }
