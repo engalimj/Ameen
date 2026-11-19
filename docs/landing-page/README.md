@@ -66,7 +66,7 @@ This order is a first guess. Re-rank from real sales calls and WhatsApp question
 ## 10. Legal
 
 - Pages: `/privacy` and `/terms`, linked under the form (consent wording) and in the footer.
-- Regulation: Saudi PDPL. Both pages are drafts and need a lawyer's review before launch; also confirm the contact email and whether to show the commercial registration number.
+- Regulation: Saudi PDPL. Both pages are drafts and need a lawyer's review before launch; also contact is tryameen.sa@gmail.com and Instagram @tryameen.sa (confirmed by Ali); confirm whether to show the commercial registration number.
 
 ## Pre-launch checklist
 
