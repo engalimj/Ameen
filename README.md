@@ -77,6 +77,7 @@ Bengali: add `ur.json` or `bn.json` with the same keys, add one line to
 - [ ] Decide where collected owner money settles (check with an accountant)
 - [ ] Schedule the daily job and set `CRON_SECRET`
 - [ ] Set `MESSAGING_MODE=live` so codes are no longer shown on screen
+- [ ] Lead emails: set `RESEND_API_KEY` (Resend account signed up with the team inbox). Every landing page request is emailed to `LEAD_EMAIL` (default tryameen.sa@gmail.com); to send from your own domain, verify it in Resend and set `EMAIL_FROM`
 
 ## Stack
 
