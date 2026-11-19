@@ -1,7 +1,7 @@
 import "server-only";
 // One notification service for every channel. In the MVP:
 //  - IN_APP: stored in the Notification table, shown in each portal
-//  - EMAIL:  printed to the console until an email provider is configured
+//  - EMAIL:  sent through Resend when RESEND_API_KEY is set, else printed to the console
 //  - WHATSAPP: used only for payment reminders (job alerts come in phase 2).
 //    In console mode it prints the message; with WHATSAPP_TOKEN and
 //    WHATSAPP_PHONE_ID set it calls the Meta WhatsApp Cloud API with an
@@ -19,9 +19,33 @@ export async function notifyInApp(userId: string, kind: string, title: string, b
   return { ok: true } satisfies Result;
 }
 
+/**
+ * Email through Resend (https://resend.com) when RESEND_API_KEY is set, otherwise printed
+ * to the console. EMAIL_FROM sets the sender; until a domain is verified in Resend, the
+ * default onboarding@resend.dev can only deliver to the Resend account's own email.
+ */
 export async function sendEmail(to: string, subject: string, body: string): Promise<Result> {
-  console.log(`[email] to=${to} subject=${subject}\n${body}`);
-  return { ok: true, detail: "console" };
+  const key = process.env.RESEND_API_KEY;
+  if (!key) {
+    console.log(`[email] to=${to} subject=${subject}\n${body}`);
+    return { ok: true, detail: "console" };
+  }
+  try {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ from: process.env.EMAIL_FROM ?? "Ameen <onboarding@resend.dev>", to: [to], subject, text: body }),
+    });
+    if (!res.ok) {
+      const detail = `${res.status} ${await res.text()}`;
+      console.error(`[email] failed to=${to}: ${detail}`);
+      return { ok: false, detail };
+    }
+    return { ok: true };
+  } catch (e) {
+    console.error(`[email] failed to=${to}:`, e);
+    return { ok: false, detail: String(e) };
+  }
 }
 
 export async function sendWhatsApp(
