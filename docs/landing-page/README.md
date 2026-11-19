@@ -16,7 +16,7 @@ pre-launch checklist. Update it whenever the landing page changes.
 
 - Who is this for: the property owner or the owners' association (اتحاد الملاك) of a residential compound or building in Saudi Arabia. Ameen does not contract with individual residents or single-unit owners (Ali, 19 Nov 2026).
 - Outcome they want most: know the real state of their property and get it looked after without chasing contractors.
-- Headline, opening with a qualifying question (Ali's request): **"Do you own the property, or chair its owners' association? Know exactly what your building needs, in a free photo report within 48 hours"** · «هل أنت مالك العقار أو رئيس اتحاد الملاك في مبناك؟ اعرف احتياج مبناك بالضبط، بتقرير مجاني بالصور خلال 48 ساعة»
+- Headline, opening with a qualifying question (Ali's request): **"Do you own the property, or chair its owners' association? Let us help you find out what your building needs"** · «هل أنت مالك العقار أو رئيس اتحاد الملاك في مبناك؟ خلينا نساعدك في تحديد احتياج مبناك» (Ali's wording, 19 Nov 2026). The free photo report within 48 hours is stated in the CTA line and form header.
 
 ## 2. Subheadline
 
