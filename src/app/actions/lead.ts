@@ -8,7 +8,8 @@ import { notifyInApp } from "@/lib/messaging";
 const Lead = z.object({
   name: z.string().trim().min(2).max(80),
   phone: z.string(),
-  city: z.string().trim().max(60).optional(),
+  city: z.string().trim().min(2).max(60),
+  role: z.enum(["OWNER", "ASSOCIATION"]),
   siteType: z.enum(["COMPOUND", "BUILDING", "VILLAS"]),
   units: z.enum(["LT20", "20_50", "50_150", "GT150"]),
   services: z.array(z.enum(["CLEANING", "INSPECTION", "MAINTENANCE", "REPAIR", "COLLECTION"])).min(1),
@@ -21,7 +22,7 @@ export async function createLead(input: unknown): Promise<{ ok: boolean; error?:
   if (!phone) return { ok: false, error: "phone" };
   const locale = await getLocale();
   await db.lead.create({
-    data: { ...parsed.data, phone, city: parsed.data.city || null, services: parsed.data.services.join(","), locale },
+    data: { ...parsed.data, phone, services: parsed.data.services.join(","), locale },
   });
   const admins = await db.user.findMany({ where: { role: "ADMIN", active: true } });
   for (const a of admins) {

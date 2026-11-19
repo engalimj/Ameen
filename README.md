@@ -13,7 +13,7 @@ One web app, four portals, one database:
 | Owner (client) | `/client` | Approve or send back finished work, open and overdue jobs, monthly report, collections |
 | Ameen team | `/admin` | Assign jobs, recurring schedules, bills and reminders, setup, website leads |
 
-Also: the public landing page with free-inspection booking (`/`), phone sign-in
+Also: the public landing page with free-inspection booking (`/`, built to `docs/landing-page/`), privacy and terms pages (`/privacy`, `/terms`), phone sign-in
 with a one-time code (`/login`), and the tenant payment page (`/pay/<token>`).
 
 ## Run it locally

@@ -24,7 +24,7 @@ export default async function Leads() {
                   <a href={`https://wa.me/${l.phone.replace("+", "")}`} target="_blank" rel="noreferrer" className="text-sage-deep">WhatsApp</a>
                 </p>
                 <p className="mt-1 text-sm text-muted">
-                  {t(`siteType.${l.siteType}` as never)} · {l.units} {t("leads.units")}{l.city ? ` · ${l.city}` : ""}
+                  {l.role ? `${t(`leadRole.${l.role}` as never)} · ` : ""}{t(`siteType.${l.siteType}` as never)} · {l.units} {t("leads.units")}{l.city ? ` · ${l.city}` : ""}
                 </p>
                 <p className="text-sm text-muted">{l.services.split(",").map((s) => t(`service.${s}` as never)).join("، ")}</p>
                 <p className="mt-1 text-xs text-muted">{fmtDateTime(l.createdAt)}</p>
