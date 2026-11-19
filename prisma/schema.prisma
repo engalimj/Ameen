@@ -264,6 +264,7 @@ model Lead {
   name      String
   phone     String
   city      String?
+  role      String? // OWNER | ASSOCIATION (who is booking)
   siteType  String
   units     String
   services  String // comma separated

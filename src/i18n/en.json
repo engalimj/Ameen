@@ -87,6 +87,8 @@
   "siteType.COMPOUND": "Residential compound",
   "siteType.BUILDING": "Apartment building",
   "siteType.VILLAS": "Villas",
+  "leadRole.OWNER": "Property owner",
+  "leadRole.ASSOCIATION": "Owners' association",
   "service.CLEANING": "Daily cleaning",
   "service.INSPECTION": "Periodic inspection",
   "service.MAINTENANCE": "Regular maintenance",
@@ -389,14 +391,14 @@
     "fCityPh": "For example: Riyadh",
     "back": "Back",
     "next": "Next",
-    "err1": "Choose a property type and number of units to continue.",
+    "err1": "Choose who you are, the property type and the number of units to continue.",
     "err2": "Choose at least one service.",
     "errPhone": "Enter a valid Saudi mobile number, for example 05X XXX XXXX.",
     "thanks": "Thank you, we got your request",
     "thanksSub": "We will contact you within one working day to schedule the visit.",
     "again": "New request",
-    "headline": "Know exactly what your compound needs, in a free photo report within 48 hours",
-    "sub": "We visit your compound or building, check cleaning, facilities and equipment, and send you every finding with photos. If you like the plan, the same team then handles daily cleaning, maintenance and repairs.",
+    "headline": "Know exactly what your building needs, in a free photo report within 48 hours",
+    "sub": "We serve residential compounds and buildings through their owners' association or the property owner. We visit, check cleaning, facilities and equipment, and send you every finding with photos.",
     "cta": "Book my free inspection",
     "ctaHow": "We visit your site, then send the photo report to your phone within 48 hours.",
     "heroAlt": "Sample of the inspection report you receive: an overall score, findings with status, and photos of each finding.",
@@ -445,22 +447,43 @@
     "objTitle": "Before you book",
     "obj": [
       [
-        "Is it really free?",
-        "Yes. The visit and the report cost nothing and do not commit you to anything. If you choose a plan later, it is a yearly contract billed monthly."
+        "Is the inspection really free?",
+        "Yes. The visit and the report cost nothing and do not commit you to anything. If you subscribe later, it starts from 170 SAR per unit a month with everything listed above included, on a yearly contract billed monthly."
       ],
       [
         "How do I know the work gets done?",
         "Every job comes with before and after photos, and you approve it in the app. If it is not right, it goes back to the team."
       ],
       [
-        "Will it fit my property?",
-        "We work with compounds, apartment buildings and villas, from under 20 units to over 150. Tenants report issues from their phone, with no app to download."
+        "Do you work with individual residents?",
+        "No. We contract with the property owner or the owners' association for the whole building, from under 20 units to over 150. Residents then report issues from their phone, with no app to download."
       ]
     ],
     "proofTitle": "What owners say",
     "proof": [],
     "err3": "Enter your name, mobile number and city.",
-    "footerRights": "© 2026 Ameen. All rights reserved."
+    "footerRights": "© 2026 Ameen. All rights reserved.",
+    "headlineQ": "Do you own the property, or chair its owners' association?",
+    "planTitle": "Monthly subscription",
+    "planFrom": "From",
+    "planPrice": "170 SAR",
+    "planPer": "per unit, per month",
+    "planIncl": [
+      "Daily cleaning",
+      "General maintenance of shared areas",
+      "3 free maintenance visits a year for each unit",
+      "Elevator maintenance",
+      "Security camera system maintenance",
+      "Garden and landscaping maintenance"
+    ],
+    "planNote": "All included in the monthly price. Yearly contract, billed monthly.",
+    "q0": "Who are you?",
+    "roles": [
+      "Property owner",
+      "Owners' association (chair or board)",
+      "A resident or owner of one unit"
+    ],
+    "roleNo": "We work with the whole building through its owner or owners' association, not with single units. Share this page with them and we will take it from there."
   },
   "legal": {
     "updated": "Last updated: 19 November 2026",

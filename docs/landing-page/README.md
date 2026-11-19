@@ -14,14 +14,15 @@ pre-launch checklist. Update it whenever the landing page changes.
 
 ## 1. Headline
 
-- Who is this for: owners and managers of residential compounds, apartment buildings and villa groups in Saudi Arabia.
+- Who is this for: the property owner or the owners' association (اتحاد الملاك) of a residential compound or building in Saudi Arabia. Ameen does not contract with individual residents or single-unit owners (Ali, 19 Nov 2026).
 - Outcome they want most: know the real state of their property and get it looked after without chasing contractors.
-- Headline: **"Know exactly what your compound needs, in a free photo report within 48 hours"** · «اعرف احتياج مجمعك بالضبط، بتقرير مجاني بالصور خلال 48 ساعة»
+- Headline, opening with a qualifying question (Ali's request): **"Do you own the property, or chair its owners' association? Know exactly what your building needs, in a free photo report within 48 hours"** · «هل أنت مالك العقار أو رئيس اتحاد الملاك في مبناك؟ اعرف احتياج مبناك بالضبط، بتقرير مجاني بالصور خلال 48 ساعة»
 
 ## 2. Subheadline
 
 - Skeptic's question: "How? And then what?"
-- Subheadline: "We visit your compound or building, check cleaning, facilities and equipment, and send you every finding with photos. If you like the plan, the same team then handles daily cleaning, maintenance and repairs."
+- Subheadline: "We serve residential compounds and buildings through their owners' association or the property owner. We visit, check cleaning, facilities and equipment, and send you every finding with photos."
+- Price and what it includes, right under the subheadline, because a visible price qualifies leads: from 170 SAR per unit per month, including daily cleaning, general maintenance of shared areas, 3 free maintenance visits a year for each unit, elevator maintenance, security camera system maintenance and garden maintenance. Yearly contract, billed monthly.
 
 ## 3. Hero image
 
@@ -36,8 +37,9 @@ pre-launch checklist. Update it whenever the landing page changes.
 
 ## 5. Form
 
-- Qualified lead: a property with shared areas to look after (compound, building or villas), its size, its city, and the services they need.
-- Fields (6): property type, number of units, services, name, mobile, city. More than 5, so 3 steps, easiest first (tap choices before typing).
+- Qualified lead: the property owner or owners' association of a building with shared areas (compound, building or villas), its size, its city, and the services they need.
+- Fields (7): who they are, property type, number of units, services, name, mobile, city. More than 5, so 3 steps, easiest first (tap choices before typing).
+- Choosing "a resident or owner of one unit" stops the form and asks them to share the page with their owner or association.
 - City is required because location decides whether we can serve them.
 
 ## 6. Justification line
@@ -46,9 +48,9 @@ pre-launch checklist. Update it whenever the landing page changes.
 
 ## 7. Objection bullets (below the fold, most common first)
 
-1. Price and risk: "Is it really free?"
+1. Price and risk: "Is the inspection really free?" (also restates the 170 SAR subscription)
 2. Trust: "How do I know the work gets done?"
-3. Fit: "Will it fit my property?"
+3. Fit: "Do you work with individual residents?"
 
 This order is a first guess. Re-rank from real sales calls and WhatsApp questions once the pilot starts.
 
@@ -61,7 +63,7 @@ This order is a first guess. Re-rank from real sales calls and WhatsApp question
 
 - Removed: navigation menu, sign-in link, second CTA, services grid, how-it-works, why-us, FAQ, closing banner, social links. (Existing users sign in at `/login` directly.)
 - Kept: logo, language switch (the page must work in Arabic and English).
-- Target: under 300 KB transferred and LCP under 2.5 s on a mid-range phone on 4G. Measured on a local production build: 189 KB (Arabic, phone), 228 KB (English, phone); the hero uses no raster images.
+- Target: under 300 KB transferred and LCP under 2.5 s on a mid-range phone on 4G. Measured on a local production build: about 255 KB on phone in both languages; the hero uses no raster images.
 
 ## 10. Legal
 

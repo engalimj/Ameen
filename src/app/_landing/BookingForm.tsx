@@ -4,7 +4,7 @@ import Link from "next/link";
 import { createLead } from "@/app/actions/lead";
 
 export type BookingStrings = {
-  progressLabel: string; p: string[];
+  progressLabel: string; p: string[]; q0: string; roles: string[]; roleNo: string;
   q1: string; types: string[]; q1b: string; sizes: string[];
   q2: string; needsL: string[]; q2hint: string;
   q3: string; fName: string; fNamePh: string; fPhone: string; fPhoneHint: string; fCity: string; fCityPh: string;
@@ -13,6 +13,7 @@ export type BookingStrings = {
   thanks: string; thanksSub: string; again: string;
 };
 
+const ROLE_KEYS = ["OWNER", "ASSOCIATION"] as const; // the third choice (single unit) is not a lead
 const TYPE_KEYS = ["COMPOUND", "BUILDING", "VILLAS"] as const;
 const SIZE_KEYS = ["LT20", "20_50", "50_150", "GT150"] as const;
 const NEED_KEYS = ["CLEANING", "INSPECTION", "MAINTENANCE", "REPAIR", "COLLECTION"] as const;
@@ -22,6 +23,7 @@ const chip = (on: boolean) =>
 
 export function BookingForm({ s }: { s: BookingStrings }) {
   const [step, setStep] = useState(1);
+  const [role, setRole] = useState<number | null>(null);
   const [type, setType] = useState<number | null>(null);
   const [size, setSize] = useState<number | null>(null);
   const [needs, setNeeds] = useState<boolean[]>([false, false, false, false, false]);
@@ -33,13 +35,13 @@ export function BookingForm({ s }: { s: BookingStrings }) {
   const [pending, start] = useTransition();
 
   const next = () => {
-    if (step === 1 && (type === null || size === null)) return setError(s.err1);
+    if (step === 1 && (role === null || role > 1 || type === null || size === null)) return setError(role === 2 ? null : s.err1);
     if (step === 2 && !needs.some(Boolean)) return setError(s.err2);
     if (step === 3) {
       if (name.trim().length < 2 || phone.trim().length < 9 || city.trim().length < 2) return setError(s.err3);
       return start(async () => {
         const res = await createLead({
-          name, phone, city,
+          name, phone, city, role: ROLE_KEYS[role!],
           siteType: TYPE_KEYS[type!], units: SIZE_KEYS[size!],
           services: NEED_KEYS.filter((_, i) => needs[i]),
         });
@@ -56,7 +58,7 @@ export function BookingForm({ s }: { s: BookingStrings }) {
         <span className="flex size-16 items-center justify-center rounded-full bg-done-bg text-3xl text-done-ink">✓</span>
         <h3 className="text-xl font-bold">{s.thanks}</h3>
         <p className="text-muted">{s.thanksSub}</p>
-        <button className="btn-quiet btn" onClick={() => { setSent(false); setStep(1); setType(null); setSize(null); setNeeds([false, false, false, false, false]); setName(""); setPhone(""); setCity(""); }}>
+        <button className="btn-quiet btn" onClick={() => { setSent(false); setStep(1); setRole(null); setType(null); setSize(null); setNeeds([false, false, false, false, false]); setName(""); setPhone(""); setCity(""); }}>
           {s.again}
         </button>
       </div>
@@ -76,6 +78,15 @@ export function BookingForm({ s }: { s: BookingStrings }) {
 
       {step === 1 && (
         <div className="flex flex-col gap-5">
+          <fieldset>
+            <legend className="mb-2 font-semibold">{s.q0}</legend>
+            <div className="grid gap-2">
+              {s.roles.map((l, i) => (
+                <button key={l} type="button" aria-pressed={role === i} className={chip(role === i)} onClick={() => { setRole(i); setError(null); }}>{l}</button>
+              ))}
+            </div>
+            {role === 2 && <p role="status" className="mt-2 rounded-xl bg-wait-bg px-3 py-2 text-sm text-wait-ink">{s.roleNo}</p>}
+          </fieldset>
           <fieldset>
             <legend className="mb-2 font-semibold">{s.q1}</legend>
             <div className="grid gap-2 sm:grid-cols-3">

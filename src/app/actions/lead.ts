@@ -9,6 +9,7 @@ const Lead = z.object({
   name: z.string().trim().min(2).max(80),
   phone: z.string(),
   city: z.string().trim().min(2).max(60),
+  role: z.enum(["OWNER", "ASSOCIATION"]),
   siteType: z.enum(["COMPOUND", "BUILDING", "VILLAS"]),
   units: z.enum(["LT20", "20_50", "50_150", "GT150"]),
   services: z.array(z.enum(["CLEANING", "INSPECTION", "MAINTENANCE", "REPAIR", "COLLECTION"])).min(1),

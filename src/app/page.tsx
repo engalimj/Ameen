@@ -3,10 +3,12 @@ import { LangSwitch } from "@/components/LangSwitch";
 import { BookingForm } from "./_landing/BookingForm";
 import { HeroReport } from "./_landing/HeroReport";
 import { LegalFooter } from "./_landing/LegalFooter";
+import { PlanCard } from "./_landing/PlanCard";
 
 /*
  * Landing page. Built to docs/landing-page-playbook.pdf (see CLAUDE.md, "Landing page rules").
- * Order, top to bottom: headline, subheadline, hero image, CTA, form (+ justification line),
+ * Order, top to bottom: headline (qualifying question + promise), subheadline, price and what it
+ * includes (qualifies leads), hero image, CTA, form (+ justification line),
  * 3 objection bullets below the fold, social proof only when we have real proof, legal links.
  * No navigation menu and no second action: every element must raise qualified opt-ins.
  */
@@ -28,8 +30,12 @@ export default async function Landing() {
       <main className="flex-1">
         <section className="mx-auto grid max-w-6xl gap-8 px-4 pb-12 pt-4 md:grid-cols-[1.05fr_1fr] md:gap-12 md:pt-10">
           <div>
-            <h1 className="text-[2rem] font-bold leading-tight text-balance md:text-5xl md:leading-[1.15]">{L.headline}</h1>
+            <h1 className="text-balance">
+              <span className="block text-xl font-semibold leading-snug text-sage-deep md:text-2xl">{L.headlineQ}</span>
+              <span className="mt-2 block text-[2rem] font-bold leading-tight md:text-5xl md:leading-[1.15]">{L.headline}</span>
+            </h1>
             <p className="mt-4 max-w-xl text-lg text-muted">{L.sub}</p>
+            <PlanCard L={L} />
             <div className="mt-6 md:hidden">
               <a href="#book" className="btn-primary btn min-h-13 w-full text-base">{L.cta}</a>
               <p className="mt-2 text-center text-sm text-muted">{L.ctaHow}</p>
